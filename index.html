@@ -15,34 +15,34 @@
   </head>
   <body>
     <header class="fixed-top">
-      <nav class="navbar bg-light">
-        <div class="container-fluid">
+      <nav class="navbar bg-primary bg-gradient">
+        <div class="container">
           <div class="d-flex col-3">
             <a class="navbar-brand d-flex" href="#">
               <img src="imagenes/logo1.png" alt="CatShop Logo" class="logo-image pe-2" />
-              <h3 class="h3 fst-italic"> CatShop</h3>
+              <h3 class="h3 fst-italic">CatShop</h3>
             </a>
           </div>
           <div class="d-flex align-items-center col-6">
             <form class="d-flex w-100" role="search">
               <input id="searchValue" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button id="searchButton" class="btn btn-secondary" type="submit">Search</button>
+              <button id="searchButton" class="btn btn-light" type="submit">Search</button>
             </form>
           </div>
           <div class="col-3 text-end">
-            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#canvasCarrito" aria-controls="offcanvasRight"><i class="bi bi-cart4"></i> <span id="carritoCounter">0</span></button>
+            <button class="btn btn-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#canvasCarrito" aria-controls="offcanvasRight"><i class="bi bi-cart4"></i> <span id="carritoCounter">0</span></button>
             <div class="offcanvas offcanvas-end" tabindex="-1" id="canvasCarrito" aria-labelledby="offcanvasRightLabel">
               <div class="offcanvas-header">
                 <h2><i class="bi bi-cart4"></i></h2>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
               </div>
               <div class="offcanvas-body">
-                <div class="container" style="width: 18rem;">
+                <div class="container">
                   <div class="text-center fw-semibold fs-5 pb-2">Productos seleccionados</div>
                   <div id="carritoList" class="container border rounded"></div>
                   <div id="valorTotal" class="text-end fs-4 py-3 fw-semibold"></div>
                   <div class="text-center">
-                    <button type="button" id="btnLimpiar" class="btn btn-danger">Vaciar carrito</button>
+                    <button type="button" id="btnLimpiar" class="btn btn-danger"><i class="bi bi-trash"></i> Vaciar carrito</button>
                     <button type="button" id="btnComprar" class="btn btn-primary">Finalizar compra</button>
                   </div>
                 </div>
@@ -58,13 +58,14 @@
       <div id="listaDeProductos" class="row justify-content-center"></div>
     </div>
     
-    <footer class="p-4 bg-secondary text-white">
+    <footer class="p-4 bg-dark text-white">
       <div class="container">
         <div class="text-center">Copyright © 2022 CatShop - Proyecto final, JavaScript - Imágenes únicamente utilizadas con fines educativos</div>
       </div>
     </footer>
     <script src="javascript/carrito.js"></script>
-    <script src="javascript/main.js"></script>
+    <script src="javascript/app.js"></script>
+    <script>const app = new App()</script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   </body>
 </html>

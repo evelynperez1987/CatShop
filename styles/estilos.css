@@ -1,6 +1,7 @@
 body {
   background-image: url("../imagenes/background-6.png");
   background-repeat: repeat;
+  font-smooth: antialised;
 }
 
 .logo-image {
@@ -51,6 +52,18 @@ body {
 
 .w-100 {
   width: 100%;
+}
+
+.btnRemove {
+  position: absolute;
+  width: inherit;
+  top: 50%;
+  right: -22px;
+  padding: 0;
+  transform: translate(0, -50%);
+  color: red;
+  border: none;
+  background: none;
 }
 
 /* BOOTSTRAP OVERWRITES */
