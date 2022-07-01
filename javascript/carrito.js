@@ -1,11 +1,20 @@
 class Carrito {
+
   constructor () {
     this.productos = []
-    this.total = 0
     this.canvas = new bootstrap.Offcanvas('#canvasCarrito')
 
     const btnLimpiar = document.getElementById("btnLimpiar")
     const btnComprar = document.getElementById("btnComprar")
+    this.toastifyDefaults = {
+      duration: 1000,
+      gravity: "bottom", 
+      position: "right",
+      style: {
+        background: "#6ea8fe",
+        color: "#111111"
+      }
+    }
 
     btnLimpiar.addEventListener("click", (e) => {
       e.preventDefault()
@@ -21,16 +30,8 @@ class Carrito {
       }).then(result => {
         if (result.isConfirmed) {
           this.vaciarCarrito()
-
-          //SWEET ALERT: SE UTILIZA PARA MOSTRAR UN MENSAJE EN DONDE EL USURIO TIENE LA OPCIÓN DE CONTINUAR O CANCELAR LA ACCIÓN ANTES SELECCIONADA
-          Swal.fire({
-            title: '¡Carrito vaciado!',
-            icon: 'success',
-            text: 'El carrito ha sido vaciado correctamente'
-         
-          }).then(result => {
-            this.canvas.hide()
-          })
+          Toastify({...this.toastifyDefaults, text: "Has vaciado el carrito"}).showToast();
+          this.canvas.hide()
         }
       })
     });
@@ -64,6 +65,7 @@ class Carrito {
 
   agregarProducto (producto, guardarEnStorage = false) {
     const pExistente = this.productos.find(p => p.id === producto.id)
+    
     if(pExistente) {
       pExistente.cantidad++
     } else {
@@ -71,57 +73,87 @@ class Carrito {
       this.productos.push(producto)
     }
 
-    this.total += producto.precio
     this.refrescarVista()
 
     if(guardarEnStorage) {
       localStorage.setItem ("carrito", this.generarJson())
-      Toastify({
-        text: "Has agregado un producto",
-        duration: 1000,
-        gravity: "bottom", 
-        position: "right",
-        style: {
-          background: "#6ea8fe",
-          color: "#111111"
-        }
-      }).showToast();
+      const toastifyValues = {...this.toastifyDefaults, text: "Has agregado un producto"}
+      console.log(toastifyValues)
+      Toastify(toastifyValues).showToast();
     }     
+  }
+
+  quitarProducto(idProducto) {
+    this.productos = this.productos.filter(p => p.id !== idProducto)
+    localStorage.setItem ("carrito", this.generarJson())
+    this.refrescarVista()
+    Toastify({...this.toastifyDefaults, duration: 2000, text: "Has eliminado un producto"}).showToast();
   }
 
   refrescarVista (producto) {
     const listaDeProductos = document.getElementById("carritoList")
     const counter = document.getElementById("carritoCounter")
     const valorTotal = document.getElementById("valorTotal")
+    const btnLimpiar = document.getElementById("btnLimpiar")
+    const btnComprar = document.getElementById("btnComprar")
+    
     let contador = 0
+    let total = 0
 
     listaDeProductos.innerHTML = ""
 
     this.productos.forEach( producto => {
-      const {precio, nombre, imagen, cantidad} = producto
+      const {id, precio, nombre, imagen, cantidad} = producto
       const row = document.createElement("div")
-      row.className = "row border-top py-2"
+      const btnRemove = document.createElement('button')
+      total += precio * cantidad
+
+      row.className = "row border-top py-2 position-relative"
+      btnRemove.innerHTML = '<i class="bi bi-x-circle-fill"></i>'
+      btnRemove.className = 'btnRemove'
+      btnRemove.setAttribute("title", "Quitar producto")
+
+      btnRemove.addEventListener('click', (e) => {
+        e.preventDefault()
+        Swal.fire({
+          title: 'Borrar producto',
+          text: '¿Estás seguro que quieres borrar este producto?',
+          icon: 'question',
+          confirmButtonText: 'Confirmar',
+          cancelButtonText: 'Cancelar',
+          showCancelButton: true,
+        
+        }).then(result => {
+          if (result.isConfirmed) {
+            this.quitarProducto(id)
+          }
+        })
+      })
     
       row.innerHTML = `
           <div class="col-img ms-2">
             <img src="imagenes/productos/${imagen}" alt="Imagen del producto ${nombre}" class="border" />
           </div>
-          <div class="col text-start">
-            ${nombre}
-          </div>
-          <div class="col-precio pe-2">
-            x${cantidad}
-          </div>
-          <div class="col-precio pe-2">
-            $${precio * cantidad}
-          </div>`
+          <div class="col text-start">${nombre}</div>
+          <div class="col-precio pe-2">${cantidad}x</div>
+          <div class="col-precio pe-2">$${precio * cantidad}</div>`
+      
+      row.appendChild(btnRemove)
     
       listaDeProductos.appendChild(row)
       contador += 1 * cantidad
     })
 
+    if(this.productos.length === 0) {
+      btnLimpiar.setAttribute("disabled", "disabled")
+      btnComprar.setAttribute("disabled", "disabled")
+    } else {
+      btnLimpiar.removeAttribute("disabled")
+      btnComprar.removeAttribute("disabled")
+    }
+
     counter.innerText = contador
-    valorTotal.innerText = `Total $${this.getTotal()}`
+    valorTotal.innerText = `Total $${total}`
   }
 
   generarJson () {
@@ -130,12 +162,7 @@ class Carrito {
 
   vaciarCarrito () {
     this.productos = []
-    this.total = 0
-    this.refrescarVista()
     localStorage.setItem ("carrito", this.generarJson())
-  }
-
-  getTotal() {
-    return this.total
+    this.refrescarVista()
   }
 }
